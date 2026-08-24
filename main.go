@@ -1,27 +1,42 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 	"github.com/mumairdotdev/gator-go/internal/config"
 )
 
+type state struct {
+	cfg *config.Config
+}
+
 func main() {
+
+
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatal("Error reading config:", err)
 	}
-	fmt.Printf("Read config: %+v\n", cfg)
+	State := state{cfg: &cfg}
 
-	// Example usage of SetUser
-	err = cfg.SetUser("Umair")
-	if err != nil {
-		log.Fatal("Error setting user:", err)
+	cmds := commands{
+		registeredCommands: make(map[string]func(*state, command) error),
 	}
 
-	cfg, err = config.Read()
-	if err != nil {
-		log.Fatal("Error reading config after setting user:", err)
+	cmds.register("login", handleLogin)
+
+	args := os.Args[1:]
+	if len(args) < 1 {
+		log.Fatal("No command provided")
 	}
-	fmt.Printf("Updated config: %+v\n", cfg)
+
+	cmd := command{
+		Name: args[0],
+		Args: args[1:],
+	}
+
+	err = cmds.run(&State, cmd)
+	if err != nil {
+		log.Fatal("Error executing command:", err)
+	}
 }
