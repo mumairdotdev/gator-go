@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-const projectDir = "workspace/boot.dev/blog-aggregator-go"
+// const projectDir = "workspace/boot.dev/blog-aggregator-go"
 const configFileName = ".gatorconfig.json"
 
 type Config struct {
@@ -46,7 +46,7 @@ func getConfigFilePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, projectDir, configFileName), nil
+	return filepath.Join(home, configFileName), nil
 }
 
 func write(cfg Config) error {
