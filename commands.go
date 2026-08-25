@@ -14,40 +14,13 @@ type commands struct {
 }
 
 func (c *commands) run(s *state, cmd command) error {
-	if cmd.Name == "login" {
-		if handler, ok := c.registeredCommands[cmd.Name]; ok {
-			return handler(s, cmd)
-		}
+	f, ok := c.registeredCommands[cmd.Name]
+	if !ok {
+		return errors.New("command not found")
 	}
-	if cmd.Name == "register" {
-		if handler, ok := c.registeredCommands[cmd.Name]; ok {
-			return handler(s, cmd)
-		}
-	}
-	if cmd.Name == "reset" {
-		if handler, ok := c.registeredCommands[cmd.Name]; ok {
-			return handler(s, cmd)
-		}
-	}
-	if cmd.Name == "users" {
-		if handler, ok := c.registeredCommands[cmd.Name]; ok {
-			return handler(s, cmd)
-		}
-	}
-	return errors.New("command not found")
+	return f(s, cmd)
 }
 
 func (c *commands) register(name string, f func(*state, command) error) {
-	if name == "login" {
-		c.registeredCommands[name] = f
-	}
-	if name == "register" {
-		c.registeredCommands[name] = f
-	}
-	if name == "reset" {
-		c.registeredCommands[name] = f
-	}
-	if name == "users" {
-		c.registeredCommands[name] = f
-	}
+	c.registeredCommands[name] = f
 }
